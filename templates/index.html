@@ -3,65 +3,75 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6f5f1">
+  <meta name="theme-color" content="#f5f6f3">
+  <meta name="description" content="Goodfield Kitchen restaurant service desk for managing live orders and kitchen operations.">
   <title>Goodfield — Service desk</title>
   <link rel="stylesheet" href="./static/styles.css">
   <script defer src="./static/app.js"></script>
 </head>
 <body>
+  <a class="skip-link" href="#overview">Skip to dashboard</a>
   <div class="app-shell">
     <aside class="sidebar">
       <a class="brand" href="./" aria-label="Goodfield home"><span class="brand-mark">g</span><span>goodfield<span class="brand-dot">.</span></span></a>
-      <div class="location-switch"><span class="location-icon">⌖</span><span><strong>Goodfield Kitchen</strong><small>East Village · New York</small></span><span class="chevron">⌄</span></div>
+      <div class="location-switch"><span class="location-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span><strong>Goodfield Kitchen</strong><small>East Village · New York</small></span><span class="chevron" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"/></svg></span></div>
       <div class="nav-caption">WORKSPACE</div>
       <nav class="main-nav" aria-label="Main navigation">
-        <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span>Overview</a>
-        <a class="nav-item" href="#orders"><span class="nav-icon">▤</span>Orders<span id="nav-orders" class="nav-count">4</span></a>
-        <a class="nav-item" href="#menu"><span class="nav-icon">♨</span>Menu</a>
-        <a class="nav-item" href="#insights"><span class="nav-icon">⌁</span>Insights</a>
+        <a class="nav-item active" href="#overview"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg></span>Overview</a>
+        <a class="nav-item" href="#orders"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V20a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z"/><path d="M14 3.5v5h5M8 13h8M8 17h8"/></svg></span>Orders<span id="nav-orders" class="nav-count">4</span></a>
+        <a class="nav-item" id="menu-navigation" href="#menu"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v7M7 4v7M10 4v7M7 11v9M17 4v16M17 4c2 2 3 5 3 8h-3"/></svg></span>Menu</a>
+        <a class="nav-item" href="#insights"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19.5h16M6 16V9M12 16V5M18 16v-4"/></svg></span>Insights</a>
       </nav>
       <div class="sidebar-bottom">
-        <div class="sidebar-promo"><span class="promo-spark">✳</span><strong>Service is looking good</strong><p>You're on track for a smooth lunch rush.</p><div class="promo-meter"><i></i></div><small>86% of today's orders on time</small></div>
-        <button class="profile"><span class="avatar">JC</span><span><strong>Jordan Cruz</strong><small>Floor manager</small></span><span class="chevron">···</span></button>
+        <div class="sidebar-promo"><span class="promo-spark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></svg></span><strong>Service is looking good</strong><p>You're on track for a smooth lunch rush.</p><div class="promo-meter"><i></i></div><small>86% of today's orders on time</small></div>
+        <div class="profile"><span class="avatar" aria-hidden="true">JC</span><span><strong>Jordan Cruz</strong><small>Floor manager</small></span></div>
       </div>
     </aside>
 
-    <main class="main-content">
-      <header class="topbar"><div class="breadcrumbs">Goodfield Kitchen <span>/</span> <strong>Overview</strong></div><div class="top-actions"><span class="service-live"><i></i> Service live</span><button class="icon-button" aria-label="Notifications">♧<b></b></button><span class="today-date">MON, OCT 14</span></div></header>
-      <section class="page-heading"><div><div class="eyebrow">MONDAY SERVICE <span>·</span> LUNCH</div><h1>Good afternoon, Jordan <span class="wave">✦</span></h1><p>Here's what's happening across your floor today.</p></div><button class="primary-button" id="new-order-button"><span>＋</span> New order</button></section>
+    <main class="main-content" id="overview">
+      <header class="topbar"><div class="breadcrumbs">Goodfield Kitchen <span>/</span> <strong>Overview</strong></div><div class="top-actions"><span class="service-live"><i></i> Service live</span><span class="today-date" id="today-date"></span></div></header>
+      <section class="service-hero" aria-labelledby="service-title">
+        <div class="hero-copy">
+          <div class="hero-kicker"><span></span> LUNCH SERVICE</div>
+          <h1 id="service-title">Good afternoon, Jordan</h1>
+          <p>Your service, at a glance. Keep every table and ticket moving.</p>
+          <div class="hero-actions"><span class="hero-location"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>East Village, New York</span><button class="primary-button" id="new-order-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Start an order</button></div>
+        </div>
+        <span class="hero-photo-label">GOODFIELD KITCHEN <i>·</i> SEASONAL, MADE WELL</span>
+      </section>
 
       <section class="metric-grid" aria-label="Today's service metrics">
-        <article class="metric-card"><div class="metric-top"><span>NET SALES</span><span class="metric-icon orange">↗</span></div><div class="metric-number" id="sales-value">$2,840<span class="trend">↑ 12.8%</span></div><div class="metric-note">vs. $2,518 same day last week</div><div class="sparkline"><svg viewBox="0 0 220 44" preserveAspectRatio="none"><path d="M0 35 C15 34 17 20 30 24 S48 33 61 18 S78 26 92 18 S114 21 128 11 S145 21 160 15 S179 21 190 8 S208 13 220 3"/></svg></div></article>
-        <article class="metric-card"><div class="metric-top"><span>ORDERS TODAY</span><span class="metric-icon green">▤</span></div><div class="metric-number" id="orders-value">48<span class="trend">↑ 8.2%</span></div><div class="metric-note">Across dine-in, pickup & delivery</div><div class="mini-bars"><i style="height:35%"></i><i style="height:54%"></i><i style="height:43%"></i><i style="height:68%"></i><i style="height:49%"></i><i style="height:78%"></i><i style="height:62%"></i><i style="height:94%"></i><i style="height:70%"></i><i style="height:83%"></i><i style="height:59%"></i><i class="bar-active" style="height:98%"></i></div></article>
-        <article class="metric-card"><div class="metric-top"><span>AVG. TICKET TIME</span><span class="metric-icon blue">◷</span></div><div class="metric-number">18<span class="unit"> min</span><span class="trend">↓ 2 min</span></div><div class="metric-note">Target is under 20 minutes</div><div class="time-track"><span></span><i></i><b>20m target</b></div></article>
-        <article class="metric-card"><div class="metric-top"><span>OPEN TABLES</span><span class="metric-icon purple">⌑</span></div><div class="metric-number">7<span class="unit"> / 12</span><span class="trend neutral">5 available</span></div><div class="metric-note">2 tables waiting on checks</div><div class="table-dots"><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i></i><i></i><i></i><i></i><i></i></div></article>
+        <article class="metric-card"><div class="metric-top"><span>NET SALES</span><span class="metric-icon orange" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 17 17 5M7 5h10v10"/></svg></span></div><div class="metric-number" id="sales-value">$2,840<span class="trend" aria-label="Up 12.8 percent"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 10 4-4 3 3 4-5"/><path d="M10 4h4v4"/></svg>12.8%</span></div><div class="metric-note">vs. $2,518 same day last week</div><div class="sparkline"><svg viewBox="0 0 220 44" role="img" aria-label="Recent sales trend is upward" preserveAspectRatio="none"><path d="M0 35 C15 34 17 20 30 24 S48 33 61 18 S78 26 92 18 S114 21 128 11 S145 21 160 15 S179 21 190 8 S208 13 220 3"/></svg></div></article>
+        <article class="metric-card"><div class="metric-top"><span>ORDERS TODAY</span><span class="metric-icon green" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V20a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z"/><path d="M14 3.5v5h5M8 13h8M8 17h8"/></svg></span></div><div class="metric-number" id="orders-value">48<span class="trend" aria-label="Up 8.2 percent"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 10 4-4 3 3 4-5"/><path d="M10 4h4v4"/></svg>8.2%</span></div><div class="metric-note">Across dine-in, pickup & delivery</div><div class="mini-bars"><i style="height:35%"></i><i style="height:54%"></i><i style="height:43%"></i><i style="height:68%"></i><i style="height:49%"></i><i style="height:78%"></i><i style="height:62%"></i><i style="height:94%"></i><i style="height:70%"></i><i style="height:83%"></i><i style="height:59%"></i><i class="bar-active" style="height:98%"></i></div></article>
+        <article class="metric-card"><div class="metric-top"><span>AVG. TICKET TIME</span><span class="metric-icon blue" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><div class="metric-number">18<span class="unit"> min</span><span class="trend" aria-label="Down 2 minutes"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M4.5 9.5 8 13l3.5-3.5"/></svg>2 min</span></div><div class="metric-note">Target is under 20 minutes</div><div class="time-track"><span></span><i></i><b>20m target</b></div></article>
+        <article class="metric-card"><div class="metric-top"><span>OPEN TABLES</span><span class="metric-icon purple" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10h16M6 10V6h12v4M7 10v8M17 10v8M4 18h16"/></svg></span></div><div class="metric-number">7<span class="unit"> / 12</span><span class="trend neutral">5 available</span></div><div class="metric-note">2 tables waiting on checks</div><div class="table-dots"><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i class="occupied"></i><i></i><i></i><i></i><i></i><i></i></div></article>
       </section>
 
       <div class="content-grid">
         <section class="panel orders-panel" id="orders">
-          <div class="panel-heading"><div><h2>Live orders <span class="live-pip"></span></h2><p>Your floor, updated in real time</p></div><button class="text-button" id="view-all">View all <span>→</span></button></div>
-          <div class="order-tabs" role="tablist"><button class="tab active" data-filter="all">All <span id="all-count">4</span></button><button class="tab" data-filter="new">New <span id="new-count">1</span></button><button class="tab" data-filter="preparing">Preparing <span id="preparing-count">2</span></button><button class="tab" data-filter="ready">Ready <span id="ready-count">1</span></button></div>
-          <div class="order-list" id="order-list" aria-live="polite"></div>
-          <div class="panel-footer"><span><i class="refresh-dot"></i> Auto-refreshing every few seconds</span><button class="text-button" id="refresh-button">Refresh now ↻</button></div>
+          <div class="panel-heading"><div><h2>Live orders <span class="live-pip"></span></h2><p>Your floor, updated in real time</p></div><button class="text-button" id="view-all">View all <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M10 5l5 5-5 5"/></svg></button></div>
+          <div class="order-tabs" aria-label="Filter orders"><button class="tab active" type="button" aria-pressed="true" data-filter="all">All <span id="all-count">4</span></button><button class="tab" type="button" aria-pressed="false" data-filter="new">New <span id="new-count">1</span></button><button class="tab" type="button" aria-pressed="false" data-filter="preparing">Preparing <span id="preparing-count">2</span></button><button class="tab" type="button" aria-pressed="false" data-filter="ready">Ready <span id="ready-count">1</span></button></div>
+          <div class="order-list" id="order-list"></div>
+          <div class="panel-footer"><span><i class="refresh-dot"></i> Auto-refreshing every few seconds</span><button class="text-button" id="refresh-button">Refresh now <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 9a6 6 0 0 0-10.2-3.9L4 7M4 4v3h3M4 11a6 6 0 0 0 10.2 3.9L16 13m0 3v-3h-3"/></svg></button></div>
         </section>
 
         <div class="right-column">
           <section class="panel kitchen-panel"><div class="panel-heading compact"><div><h2>Kitchen pulse</h2><p>Tickets by urgency</p></div><span class="kitchen-status">ON TRACK</span></div><div class="kitchen-summary"><div><strong id="active-tickets">3</strong><span>active tickets</span></div><div class="divider"></div><div><strong>12<span>m</span></strong><span>avg. prep time</span></div></div><div class="queue-heading"><span>UP NEXT</span><span>QUEUE POSITION</span></div><div id="kitchen-queue" class="queue-list"></div></section>
-          <section class="panel popular-panel" id="insights"><div class="panel-heading compact"><div><h2>Guest favorites</h2><p>Top sellers this service</p></div><button class="more-button" aria-label="More options">···</button></div><div id="popular-list" class="popular-list"></div><div class="batch-note"><span>✦</span><span><strong>Prep plan</strong><small>Best batch under 10 min: <b id="prep-batch">—</b></small></span></div></section>
+          <section class="panel popular-panel" id="insights"><div class="panel-heading compact"><div><h2>Guest favorites</h2><p>Top sellers this service</p></div></div><div id="popular-list" class="popular-list"></div><div class="batch-note"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Z"/></svg></span><span><strong>Prep plan</strong><small>Best batch under 10 min: <b id="prep-batch">—</b></small></span></div></section>
         </div>
       </div>
-      <footer class="page-footer"><span>GOODFIELD SERVICE DESK <i>·</i> V 2.4.0</span><span>Need a hand? <a href="#support">Visit the help center</a></span></footer>
+      <footer class="page-footer"><span>GOODFIELD SERVICE DESK <i>·</i> V 2.4.0</span><span>Restaurant operations</span></footer>
     </main>
   </div>
 
   <div class="modal-backdrop" id="order-modal" hidden>
     <section class="order-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="modal-heading"><div><span class="eyebrow">GOODFIELD KITCHEN</span><h2 id="modal-title">Start an order</h2></div><button class="close-button" id="close-modal" aria-label="Close">×</button></div>
-      <label class="field-label" for="guest-name">Guest name</label><input id="guest-name" class="text-input" placeholder="e.g. Sam Taylor">
-      <div class="menu-heading"><div><h3>Menu</h3><span>Tap an item to add it</span></div><label class="search-box"><span>⌕</span><input id="menu-search" placeholder="Search menu"></label></div>
+      <div class="modal-heading"><div><span class="eyebrow">GOODFIELD KITCHEN</span><h2 id="modal-title">Start an order</h2></div><button class="close-button" id="close-modal" aria-label="Close"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg></button></div>
+      <label class="field-label" for="guest-name">Guest name <span>(optional)</span></label><input id="guest-name" class="text-input" autocomplete="name" placeholder="e.g. Sam Taylor">
+      <div class="menu-heading"><div><h3>Menu</h3><span>Choose an item to add it to this order</span></div><label class="search-box"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg><input id="menu-search" type="search" aria-label="Search menu items" placeholder="Search menu"></label></div>
       <label class="modifier-option"><input id="add-avocado" type="checkbox"> Add avocado to chicken sandwich <b>+$2</b></label>
-      <div class="modal-menu" id="modal-menu"></div>
-      <div class="cart-footer"><div><span id="cart-count">0 items</span><strong id="cart-total">$0.00</strong></div><button class="primary-button" id="submit-order" disabled>Place order <span>→</span></button></div>
+      <div class="modal-menu" id="modal-menu" aria-label="Menu items"></div>
+      <div class="cart-footer"><div><span id="cart-count">0 items</span><strong id="cart-total">$0.00</strong></div><button class="primary-button" id="submit-order" disabled>Place order <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M10 5l5 5-5 5"/></svg></button></div>
       <div id="order-message" class="order-message" role="status"></div>
     </section>
   </div>

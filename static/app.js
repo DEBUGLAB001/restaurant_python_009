@@ -4,6 +4,20 @@ let activeFilter = "all";
 const cart = new Map();
 const nextStatus = { new: "preparing", preparing: "ready", ready: "completed" };
 const statusLabel = { new: "New", preparing: "Preparing", ready: "Ready", completed: "Completed" };
+let modalReturnFocus = null;
+
+const dateNode = $("#today-date");
+if (dateNode) dateNode.textContent = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric" }).format(new Date()).toUpperCase();
+
+function syncActiveNavigation() {
+  const currentHash = window.location.hash || "#overview";
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    const selected = item.id !== "menu-navigation" && item.getAttribute("href") === currentHash;
+    item.classList.toggle("active", selected);
+    if (selected) item.setAttribute("aria-current", "page");
+    else item.removeAttribute("aria-current");
+  });
+}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
@@ -33,7 +47,7 @@ function renderOrders() {
     const node = $(`#${key}-count`);
     if (node) node.textContent = count;
   });
-  $("#orders-value").innerHTML = `${48 + Math.max(0, dashboard.orders.length - 4)}<span class="trend">↑ 8.2%</span>`;
+  $("#orders-value").innerHTML = `${48 + Math.max(0, dashboard.orders.length - 4)}<span class="trend" aria-label="Up 8.2 percent"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 10 4-4 3 3 4-5"/><path d="M10 4h4v4"/></svg>8.2%</span>`;
   $("#order-list").innerHTML = visible.length ? visible.map((order) => {
     const itemSummary = order.items.map((item) => `${item.quantity} × ${escapeHtml(item.name)}`).join(", ");
     const action = nextStatus[order.status]
@@ -56,15 +70,26 @@ function renderQueue() {
 }
 
 function renderPopular() {
-  const icons = ["🍝", "🥪", "🍟", "🥗", "🍰"];
   const popular = dashboard.popular || [];
-  $("#popular-list").innerHTML = popular.slice(0, 3).map((item, index) => `<div class="popular-row"><span class="food-thumb">${icons[index % icons.length]}</span><div><strong>${escapeHtml(item.name)}</strong><small>Popular this service</small></div><span class="pop-value">#${index + 1}</span></div>`).join("");
+  $("#popular-list").innerHTML = popular.slice(0, 3).map((item, index) => `<div class="popular-row"><span class="food-thumb dish-photo dish-${escapeHtml(item.id)}" aria-hidden="true"></span><div><strong>${escapeHtml(item.name)}</strong><small>Popular this service</small></div><span class="pop-value">#${index + 1}</span></div>`).join("");
 }
 
-function renderMenu() {
-  const query = $("#menu-search").value.trim().toLocaleLowerCase();
-  const matches = query ? dashboard.menu.filter((item) => item.name.toLocaleLowerCase().includes(query)) : dashboard.menu;
-  $("#modal-menu").innerHTML = matches.map((item) => `<button class="menu-item" type="button" data-menu="${escapeHtml(item.id)}"><span><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.category)} · ${escapeHtml(item.prep_minutes)} min</small></span><b>$${Number(item.price).toFixed(2)}　＋</b></button>`).join("") || `<div class="empty-state small">No menu items match that search.</div>`;
+async function renderMenu() {
+  const query = $("#menu-search").value.trim();
+  let matches = dashboard.menu;
+  if (query) {
+    try {
+      const response = await fetch(`api/menu/search?q=${encodeURIComponent(query)}`);
+      if (response.ok) matches = await response.json();
+      else matches = [];
+    } catch {
+      matches = [];
+    }
+  }
+  $("#modal-menu").innerHTML = matches.map((item) => {
+    const photo = ["m1", "m2", "m3", "m5"].includes(item.id) ? `menu-photo dish-photo dish-${escapeHtml(item.id)}` : `menu-photo menu-art menu-art-${escapeHtml(item.id)}`;
+    return `<button class="menu-item" type="button" data-menu="${escapeHtml(item.id)}"><span class="${photo}" aria-hidden="true"></span><span class="menu-copy"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.category)} · ${escapeHtml(item.prep_minutes)} min</small></span><b>$${Number(item.price).toFixed(2)}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg></b></button>`;
+  }).join("") || `<div class="empty-state small">No menu items match that search.</div>`;
   document.querySelectorAll(".menu-item").forEach((button) => button.addEventListener("click", () => addToCart(button.dataset.menu)));
 }
 
@@ -118,17 +143,26 @@ async function submitOrder() {
 }
 
 function openModal() {
+  modalReturnFocus = document.activeElement;
   $("#order-modal").hidden = false;
+  document.body.style.overflow = "hidden";
   $("#guest-name").focus();
 }
 function closeModal() {
   $("#order-modal").hidden = true;
+  document.body.style.overflow = "";
   $("#order-message").textContent = "";
+  if (modalReturnFocus && typeof modalReturnFocus.focus === "function") modalReturnFocus.focus();
+  modalReturnFocus = null;
 }
 
 document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => {
-  document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach((item) => {
+    item.classList.remove("active");
+    item.setAttribute("aria-pressed", "false");
+  });
   tab.classList.add("active");
+  tab.setAttribute("aria-pressed", "true");
   activeFilter = tab.dataset.filter;
   renderOrders();
 }));
@@ -137,12 +171,47 @@ $("#close-modal").addEventListener("click", closeModal);
 $("#refresh-button").addEventListener("click", loadDashboard);
 $("#view-all").addEventListener("click", () => {
   activeFilter = "all";
-  document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.filter === "all"));
+  document.querySelectorAll(".tab").forEach((tab) => {
+    const selected = tab.dataset.filter === "all";
+    tab.classList.toggle("active", selected);
+    tab.setAttribute("aria-pressed", String(selected));
+  });
   renderOrders();
 });
 $("#menu-search").addEventListener("input", renderMenu);
 $("#submit-order").addEventListener("click", submitOrder);
+$("#add-avocado").addEventListener("change", (event) => {
+  const chicken = cart.get("m2");
+  if (!chicken) return;
+  chicken.modifiers = event.target.checked ? [{ name: "Avocado", price: 2 }] : [];
+  updateCart();
+});
+$("#menu-navigation").addEventListener("click", (event) => {
+  event.preventDefault();
+  openModal();
+});
+window.addEventListener("hashchange", syncActiveNavigation);
 $("#order-modal").addEventListener("click", (event) => { if (event.target.id === "order-modal") closeModal(); });
-document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeModal(); });
+document.addEventListener("keydown", (event) => {
+  const modal = $("#order-modal");
+  if (modal.hidden) return;
+  if (event.key === "Escape") {
+    closeModal();
+    return;
+  }
+  if (event.key === "Tab") {
+    const focusable = [...modal.querySelectorAll('button:not(:disabled), input:not(:disabled), [href], [tabindex]:not([tabindex="-1"])')];
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+});
 loadDashboard();
+syncActiveNavigation();
 window.setInterval(loadDashboard, 5000);

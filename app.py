@@ -3,6 +3,7 @@ from copy import deepcopy
 from flask import Flask, jsonify, render_template, request
 
 from analytics import best_sellers
+from catalog import search_menu_items
 from data import MENU, ORDERS
 from kitchen import kitchen_queue
 from orders import transition_order
@@ -29,6 +30,12 @@ def state():
         "kitchen_queue": kitchen_queue(),
         "prep_batch": choose_prep_batch(10),
     })
+
+
+@app.get("/api/menu/search")
+def search_menu():
+    query = request.args.get("q", "")
+    return jsonify(search_menu_items(query))
 
 
 @app.post("/api/orders")
