@@ -2,77 +2,77 @@
 
 ## 1. Your Mission: Investigate & Fix the Bugs
 
-You are a **Python / Full-Stack Developer** working on Goodfield Kitchen, an interactive restaurant operations dashboard designed to help kitchen staff manage live pickup, delivery, and dine-in orders during service. The QA team has identified six critical issues affecting menu lookup, dish analytics, ticket queue urgency, prep batch planning, order pricing, and workflow integrity.
+You are a **Full-Stack Developer** working on Goodfield Kitchen, an interactive restaurant operations dashboard designed to help kitchen staff manage live pickup, delivery, and dine-in orders during service. The QA team has identified six critical issues affecting everyday restaurant operations.
 
 Your responsibility is to investigate the existing codebase, reproduce each issue, identify its root cause, and implement reliable fixes without disrupting existing functionality.
 
-### BUG-01: Menu Search Fails on Non-Alphabetical Menu Items
+### BUG-01: Menu Search Fails to Find Matching Items
 
-**Problem:** When searching for menu items like "sandwich" in the order creation modal, matching items fail to appear because binary search assumes the menu is sorted alphabetically, while the restaurant catalog is grouped by category.
+**Problem:** When searching for menu items by name, matching dishes fail to appear in the search results even though they exist on the restaurant menu.
 
-**How to identify it:** Open the Start an Order modal in the Live Preview and type `"sandwich"` into the menu search input. Notice that the menu displays "No menu items match that search." even though "Smoky chicken sandwich" ($16.00) is on the menu.
+**How to identify it:** Open the Start an Order modal in the Live Preview and type `"sandwich"` into the menu search bar. Notice that the menu displays *"No menu items match that search."*, even though the *"Smoky chicken sandwich"* is clearly available on the menu.
 
-**Your task:** Update `search_menu_items` in `catalog.py` to return every menu item whose name contains the search query substring, case-insensitively, regardless of how the menu is ordered.
+**Your task:** Ensure menu search returns all matching dishes containing the search query, regardless of uppercase or lowercase letters or how the menu is arranged.
 
 <p align="center">
-<img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/f2a8e97c-4cbd-4996-9afe-3c8c1c3407b6" />
+  <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/f2a8e97c-4cbd-4996-9afe-3c8c1c3407b6" />
 </p>
 
-### BUG-02: Popular Dishes Ranking Undercounts Quantities and Repeated Orders
+### BUG-02: Popular Dishes Undercounts Total Units Sold
 
-**Problem:** The "Guest favorites" panel displays inaccurate popularity rankings. The calculation collapses order line items into a set, ignoring item quantities and repeat orders, undercounting total units sold.
+**Problem:** The "Guest favorites" section calculates popular dishes incorrectly, undercounting the total number of items guests have ordered.
 
-**How to identify it:** Inspect the "Guest favorites" panel on the dashboard. Notice dishes are ranked by distinct order presence rather than aggregate units sold. In test sales histories with high-quantity orders (e.g., 5 pastas in 1 order vs 1 fry across 2 orders), fries incorrectly outranks pasta.
+**How to identify it:** Inspect the "Guest favorites" panel on the dashboard. Notice dishes are ranked by how many separate orders included them once, rather than the total number of units actually ordered. A dish ordered in large quantities (such as 5 orders of pasta on a single ticket) gets ranked lower than an item ordered only once or twice across separate tickets.
 
-**Your task:** Fix `best_sellers` in `analytics.py` to tally the actual units sold (`quantity`) across all order lines in sales history and ensure deterministic ordering for ties.
+**Your task:** Ensure popular dishes are ranked accurately based on the total number of units sold across all customer orders, with consistent tie-breaking when totals are equal.
 
 <p align="center">
   <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/ab999d71-6ba8-45af-b09e-791b0f567b3b" />
 </p>
 
-### BUG-03: Kitchen Queue Sorts Tickets in Reverse Urgency
+### BUG-03: Kitchen Queue Displays Tickets in Reverse Urgency
 
-**Problem:** In the "Kitchen pulse" panel, low-urgency tickets appear ahead of urgent tickets because tickets are sorted in ascending priority order instead of descending, and FIFO order is not maintained for equal-priority tickets.
+**Problem:** In the "Kitchen pulse" panel, low-urgency tickets appear at the top of the queue ahead of urgent tickets, and tickets with equal urgency lose their first-come, first-served order.
 
-**How to identify it:** Inspect the "Kitchen pulse" panel under "UP NEXT / QUEUE POSITION". Notice Ticket `#1047` with Urgency 1 (lowest priority) is placed at Position 1 at the top of the queue, while tickets `#1046` and `#1048` with Urgency 3 (highest priority) appear below it.
+**How to identify it:** Inspect the "Kitchen pulse" panel under the "UP NEXT / QUEUE POSITION" section. Notice Ticket `#1047` with Urgency 1 (lowest priority) is sitting at Position 1 at the top of the queue, while urgent tickets `#1046` and `#1048` with Urgency 3 are pushed further down.
 
-**Your task:** Correct `kitchen_queue` in `kitchen.py` to sort tickets by urgency (priority) in descending order while preserving first-in, first-out (FIFO) sequence for tickets with equal priority.
+**Your task:** Ensure kitchen tickets are sorted with the highest urgency first, while keeping tickets of equal urgency in first-in, first-out (FIFO) order.
 
 <p align="center">
- <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/883954e3-23e8-428b-b082-e1e5d51be3d5" />
+  <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/883954e3-23e8-428b-b082-e1e5d51be3d5" />
 </p>
 
 ### BUG-04: Prep Planning Selects Suboptimal Ticket Batches
 
-**Problem:** The prep batch recommendation relies on a greedy value-density heuristic that misses the optimal combination of whole orders fitting within the prep-time capacity, leaving valuable tickets unselected.
+**Problem:** The prep batch suggestion misses the most valuable combination of orders that can fit within the kitchen's available prep time, leaving kitchen capacity underutilized.
 
-**How to identify it:** Look at the "Prep plan" card at the bottom of the right-hand column on the dashboard. Notice it selects `Best batch under 10 min: #1101` (value: 12, prep time: 6 min), leaving 4 minutes unused and missing tickets `#1102` (5 min, value 10) and `#1103` (5 min, value 10), which together yield a total value of 20.
+**How to identify it:** Look at the "Prep plan" card at the bottom of the right-hand panel on the dashboard. Notice it suggests `Best batch under 10 min: #1101` (value: 12, prep time: 6 minutes), leaving 4 minutes unused. It misses a much better combination of tickets (`#1102` and `#1103`) that together fit within 10 minutes and provide a total value of 20.
 
-**Your task:** Implement an optimal 0/1 knapsack selection algorithm in `choose_prep_batch` in `planner.py` that maximizes total ticket value within the given prep-time limit.
+**Your task:** Ensure the prep batch planner selects the best possible combination of whole tickets that maximizes total value without exceeding the prep-time limit.
 
 <p align="center">
   <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/6322e2d2-ee7d-40f7-9e2a-ec3748d76b31" />
 </p>
 
-### BUG-05: Order Total Omits Selected Item Modifiers
+### BUG-05: Order Total Omits Custom Add-Ons and Modifiers
 
-**Problem:** When guests customize an item by adding modifiers (such as adding avocado for $2 to the smoky chicken sandwich), the calculated order total only accounts for the base item price, omitting modifier costs.
+**Problem:** When guests customize a dish with paid add-ons (such as adding avocado for $2 to a sandwich), the total bill only charges for the base item and ignores the extra cost of the add-ons.
 
-**How to identify it:** Open the Start an Order modal, check the "Add avocado to chicken sandwich +$2" box, add 2 Smoky chicken sandwiches ($36.00 shown in modal cart), and click "Place order". Observe that the newly placed order in the "Live orders" table is billed as `$32.00` instead of `$36.00`.
+**How to identify it:** Open the Start an Order modal, check the *"Add avocado to chicken sandwich +$2"* option, add 2 Smoky chicken sandwiches to your cart ($36.00 shown in the modal), and click *"Place order"*. Look at the newly added ticket in the "Live orders" list: the order total shows `$32.00` instead of `$36.00` because the extra $2 avocado charge per sandwich was left out.
 
-**Your task:** Update `order_total` in `pricing.py` to include the price of each selected modifier for every unit in the line item when calculating the total bill.
+**Your task:** Ensure the calculated order total includes the price of all selected modifiers and add-ons for every unit ordered.
 
 <p align="center">
- <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/da3a2047-beed-4538-bf7f-593af34bfde7" />
+  <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/da3a2047-beed-4538-bf7f-593af34bfde7" />
 </p>
 
-### BUG-06: Order Status Transitions Bypass Kitchen Workflow Steps
+### BUG-06: Order Status Can Skip Kitchen Workflow Steps
 
-**Problem:** Orders can skip essential intermediate kitchen statuses (e.g., jumping directly from `new` to `ready` or reopening completed orders), disrupting kitchen operations and order integrity without validation.
+**Problem:** Orders can jump directly between invalid statuses (for example, jumping straight from `new` to `ready` without ever being `preparing`, or reopening completed orders), disrupting normal kitchen operations.
 
-**How to identify it:** Observe that tickets in "Live orders" can jump arbitrary statuses, such as advancing order `#1046` directly from `new` to `ready` skipping `preparing`. When an invalid status update is sent to PATCH `/api/orders/<id>`, the server accepts the change instead of raising a validation error.
+**How to identify it:** Look at the orders in the "Live orders" list. Attempting an invalid status jump (like moving an order directly from `new` to `ready`) is accepted by the application instead of being rejected.
 
-**Your task:** Update `transition_order` in `orders.py` to enforce that orders advance strictly one step at a time (`new` → `preparing` → `ready` → `completed`), rejecting any invalid transition by raising a `ValueError` without altering the order.
+**Your task:** Ensure orders strictly follow the sequential kitchen workflow (`new` → `preparing` → `ready` → `completed`), and reject any invalid or out-of-order status changes with an error.
 
 <p align="center">
   <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/988bde3f-a45e-407b-af34-183e58fc79c1" />
@@ -104,19 +104,19 @@ Goodfield Kitchen is an interactive restaurant operations dashboard built for ma
 
 Once all reported issues have been resolved, the application should behave as follows:
 
-1. **Menu Search:** Searching the menu by substring (e.g., "sandwich") returns all matching items case-insensitively regardless of catalog configuration or category grouping.
+1. **Menu Search:** Searching the menu returns all matching items regardless of letter casing or how menu items are arranged.
 
-2. **Popular Dishes:** The popular dishes ranking accurately counts total units sold across order histories with deterministic tie-breaking.
+2. **Popular Dishes:** The popular dishes ranking accurately counts total units sold across order histories with consistent tie-breaking.
 
-3. **Kitchen Queue:** Kitchen tickets in the queue are sorted with highest urgency (priority) first, maintaining FIFO order for equal-priority tickets.
+3. **Kitchen Queue:** Kitchen tickets in the queue are sorted with highest urgency first, maintaining first-come, first-served order for tickets of equal urgency.
 
-4. **Prep Planning:** Prep planning selects the global optimal combination of tickets that maximizes total value within the specified prep-time budget (e.g., tickets `#1102` and `#1103` for a 10-minute limit).
+4. **Prep Planning:** Prep planning selects the optimal combination of tickets that maximizes total value within the specified prep-time budget.
 
 5. **Order Pricing:** Placing orders with item modifiers accurately incorporates modifier charges for all item quantities in the final total.
 
-6. **Order Workflow:** Order status transitions strictly follow the valid sequence (`new` → `preparing` → `ready` → `completed`), rejecting invalid or out-of-order changes with a `ValueError`.
+6. **Order Workflow:** Order status transitions strictly follow the valid sequence (`new` → `preparing` → `ready` → `completed`), rejecting any invalid or out-of-order changes.
 
-All automated test suites in `tests/test_challenge.py` must pass with exit code `0`.
+All automated test suites must pass cleanly.
 
 ---
 
