@@ -15,7 +15,7 @@ Your responsibility is to investigate the existing codebase, reproduce each issu
 **Your task:** Update `search_menu_items` in `catalog.py` to return every menu item whose name contains the search query substring, case-insensitively, regardless of how the menu is ordered.
 
 <p align="center">
-  <img src="assets/bug01_menu_search.png" alt="BUG-01: Menu Search Fails on Non-Alphabetical Menu Items" width="720" />
+<img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/f2a8e97c-4cbd-4996-9afe-3c8c1c3407b6" />
 </p>
 
 ### BUG-02: Popular Dishes Ranking Undercounts Quantities and Repeated Orders
@@ -27,7 +27,7 @@ Your responsibility is to investigate the existing codebase, reproduce each issu
 **Your task:** Fix `best_sellers` in `analytics.py` to tally the actual units sold (`quantity`) across all order lines in sales history and ensure deterministic ordering for ties.
 
 <p align="center">
-  <img src="assets/bug02_popular_dishes.png" alt="BUG-02: Popular Dishes Ranking Undercounts Quantities and Repeated Orders" width="720" />
+  <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/ab999d71-6ba8-45af-b09e-791b0f567b3b" />
 </p>
 
 ### BUG-03: Kitchen Queue Sorts Tickets in Reverse Urgency
@@ -39,7 +39,7 @@ Your responsibility is to investigate the existing codebase, reproduce each issu
 **Your task:** Correct `kitchen_queue` in `kitchen.py` to sort tickets by urgency (priority) in descending order while preserving first-in, first-out (FIFO) sequence for tickets with equal priority.
 
 <p align="center">
-  <img src="assets/bug03_kitchen_queue.png" alt="BUG-03: Kitchen Queue Sorts Tickets in Reverse Urgency" width="720" />
+ <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/883954e3-23e8-428b-b082-e1e5d51be3d5" />
 </p>
 
 ### BUG-04: Prep Planning Selects Suboptimal Ticket Batches
@@ -51,7 +51,7 @@ Your responsibility is to investigate the existing codebase, reproduce each issu
 **Your task:** Implement an optimal 0/1 knapsack selection algorithm in `choose_prep_batch` in `planner.py` that maximizes total ticket value within the given prep-time limit.
 
 <p align="center">
-  <img src="assets/bug04_prep_planning.png" alt="BUG-04: Prep Planning Selects Suboptimal Ticket Batches" width="720" />
+  <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/6322e2d2-ee7d-40f7-9e2a-ec3748d76b31" />
 </p>
 
 ### BUG-05: Order Total Omits Selected Item Modifiers
@@ -63,7 +63,7 @@ Your responsibility is to investigate the existing codebase, reproduce each issu
 **Your task:** Update `order_total` in `pricing.py` to include the price of each selected modifier for every unit in the line item when calculating the total bill.
 
 <p align="center">
-  <img src="assets/bug05_order_total_modifiers.png" alt="BUG-05: Order Total Omits Selected Item Modifiers" width="720" />
+ <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/da3a2047-beed-4538-bf7f-593af34bfde7" />
 </p>
 
 ### BUG-06: Order Status Transitions Bypass Kitchen Workflow Steps
@@ -75,7 +75,7 @@ Your responsibility is to investigate the existing codebase, reproduce each issu
 **Your task:** Update `transition_order` in `orders.py` to enforce that orders advance strictly one step at a time (`new` → `preparing` → `ready` → `completed`), rejecting any invalid transition by raising a `ValueError` without altering the order.
 
 <p align="center">
-  <img src="assets/bug06_order_status_transitions.png" alt="BUG-06: Order Status Transitions Bypass Kitchen Workflow Steps" width="720" />
+  <img width="1280" height="840" alt="image" src="https://github.com/user-attachments/assets/988bde3f-a45e-407b-af34-183e58fc79c1" />
 </p>
 
 ---
